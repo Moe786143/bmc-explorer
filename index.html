@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telco to Techco: Business Model Canvas Explorer</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --border:         rgba(11,11,11,0.10);
+    --telco:          #2a78d6;
+    --telco-bg:       #eaf2fc;
+    --techco:         #1baf7a;
+    --techco-bg:      #e6f7f0;
+    --warning:        #fab219;
+    --warning-ink:    #7a5400;
+    --critical:       #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --surface-2:      #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #a3a29b;
+      --gridline:       #2c2c2a;
+      --border:         rgba(255,255,255,0.14);
+      --telco:          #3987e5;
+      --telco-bg:       #17263a;
+      --techco:         #199e70;
+      --techco-bg:      #10291f;
+      --warning:        #fab219;
+      --warning-ink:    #ffd580;
+      --critical:       #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --surface-2:      #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #a3a29b;
+    --gridline:       #2c2c2a;
+    --border:         rgba(255,255,255,0.14);
+    --telco:          #3987e5;
+    --telco-bg:       #17263a;
+    --techco:         #199e70;
+    --techco-bg:      #10291f;
+    --warning:        #fab219;
+    --warning-ink:    #ffd580;
+    --critical:       #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  html {
+    min-height: 100%;
+    background: var(--surface-2);
+  }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  body { min-height: 100vh; }
+  .viz-root { min-height: 100vh; background: var(--surface-2); }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  header.top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+  h1 { font-size: 24px; margin: 0 0 4px; font-weight: 700; }
+  .subtitle { color: var(--text-secondary); font-size: 14.5px; max-width: 660px; line-height: 1.5; margin: 0; }
+  .theme-btn {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
+    border-radius: 8px; padding: 7px 12px; font-size: 13px; cursor: pointer;
+  }
+
+  .controls {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    margin: 22px 0 10px; padding: 14px 16px; background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 12px;
+  }
+  .control-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .control-label { font-size: 12.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 2px; }
+  .tab-btn {
+    border: 1px solid var(--border); background: transparent; color: var(--text-secondary);
+    padding: 7px 14px; border-radius: 8px; font-size: 13.5px; cursor: pointer; font-weight: 600;
+  }
+  .tab-btn.active { background: var(--text-primary); color: var(--surface-1); border-color: var(--text-primary); }
+
+  .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; font-size: 14px; color: var(--text-secondary); }
+  .switch input { width: 34px; height: 20px; accent-color: var(--warning); cursor: pointer; }
+
+  .toolbar-2 {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    margin: 0 0 18px;
+  }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary); }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .action-btn {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
+    border-radius: 8px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; font-weight: 600;
+  }
+  .action-btn.primary { background: var(--warning); color: #201400; border-color: var(--warning); }
+  .action-btn:hover { filter: brightness(0.97); }
+
+  /* ---- Canvas grid layout ---- */
+  .canvas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+  }
+  .cell {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 13px;
+    position: relative;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .cell.major-shift { border: 2px solid var(--warning); box-shadow: 0 0 0 1px var(--warning) inset; }
+  .cell-title { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .cell-hint { font-size: 11.5px; font-style: italic; color: var(--text-muted); margin-top: -4px; line-height: 1.4; }
+  .shift-tag {
+    font-size: 10.5px; font-weight: 700; color: var(--warning-ink); background: rgba(250,178,25,0.18);
+    border: 1px solid var(--warning); border-radius: 999px; padding: 2px 7px; white-space: nowrap;
+  }
+  .half { border-radius: 7px; padding: 8px 9px 9px; font-size: 12.8px; line-height: 1.45; }
+  .half.telco { background: var(--telco-bg); }
+  .half.techco { background: var(--techco-bg); }
+  .half-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+  .half.telco .half-label { color: var(--telco); }
+  .half.techco .half-label { color: var(--techco); }
+
+  .point-list { list-style: none; margin: 0 0 6px; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+  .point { display: flex; align-items: flex-start; gap: 6px; }
+  .point-text {
+    flex: 1; outline: none; border-radius: 4px; padding: 1px 3px; cursor: text;
+  }
+  .point-text:before { content: "•"; margin-right: 6px; color: var(--text-muted); }
+  .point-text:focus { background: rgba(255,255,255,0.5); box-shadow: 0 0 0 1px var(--border); }
+  :root[data-theme="dark"] .point-text:focus { background: rgba(255,255,255,0.08); }
+  .del-btn {
+    flex: none; width: 16px; height: 16px; line-height: 14px; text-align: center; padding: 0;
+    border: none; background: transparent; color: var(--text-muted); font-size: 14px; cursor: pointer;
+    border-radius: 4px; opacity: 0.5;
+  }
+  .point:hover .del-btn { opacity: 1; }
+  .del-btn:hover { color: var(--critical); background: rgba(208,59,59,0.12); }
+  .add-btn {
+    border: 1px dashed var(--border); background: transparent; color: var(--text-muted);
+    font-size: 11.5px; padding: 3px 8px; border-radius: 6px; cursor: pointer; font-weight: 600;
+  }
+  .add-btn:hover { color: var(--text-secondary); border-color: var(--text-secondary); }
+  .why-line { font-size: 11.5px; color: var(--warning-ink); background: rgba(250,178,25,0.14); border-radius: 6px; padding: 5px 7px; margin-top: 2px; line-height: 1.4; }
+
+  .c-partners  { grid-column: 1; grid-row: 1 / span 2; }
+  .c-activities{ grid-column: 2; grid-row: 1; }
+  .c-resources { grid-column: 2; grid-row: 2; }
+  .c-vp        { grid-column: 3; grid-row: 1 / span 2; }
+  .c-relations { grid-column: 4; grid-row: 1; }
+  .c-channels  { grid-column: 4; grid-row: 2; }
+  .c-segments  { grid-column: 5; grid-row: 1 / span 2; }
+  .c-cost      { grid-column: 1 / span 3; grid-row: 3; }
+  .c-revenue   { grid-column: 4 / span 2; grid-row: 3; }
+
+  .single-mode .half.hidden-half { display: none; }
+
+  /* ---- Side-by-side layout: two mini canvases ---- */
+  .sbs-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .sbs-col-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .sbs-col-title.telco-title { color: var(--telco); }
+  .sbs-col-title.techco-title { color: var(--techco); }
+  .sbs-wrap .canvas-grid { grid-template-columns: 1fr 1fr 1.3fr 1fr 1fr; }
+  @media (max-width: 1100px) {
+    .sbs-wrap { grid-template-columns: 1fr; }
+  }
+
+  /* ---- List layout ---- */
+  .canvas-grid.layout-list { display: flex; flex-direction: column; gap: 12px; }
+  .canvas-grid.layout-list .cell { grid-column: auto !important; grid-row: auto !important; }
+
+  .insight-panel {
+    margin-top: 22px; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .insight-panel h2 { font-size: 15px; margin: 0 0 8px; }
+  .insight-panel p { font-size: 14px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 12px; }
+  .priority-list { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .priority-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 13.8px; color: var(--text-secondary); }
+  .rank { flex: none; width: 20px; height: 20px; border-radius: 999px; background: var(--warning); color: #201400; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+  footer.note { margin-top: 26px; font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+  @media (max-width: 980px) {
+    .canvas-grid:not(.layout-list) { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .canvas-grid:not(.layout-list) .cell { grid-column: auto !important; grid-row: auto !important; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root">
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Telco to Techco: Business Model Canvas Explorer</h1>
+      <p class="subtitle">An interactive, editable view of Telenor and Vodacom's core network business against their digital, Techco version, built to accompany Assignment 2 (PETM 2026-2). Click any point to edit it, use the buttons to add or remove points, and try the different layouts below.</p>
+    </div>
+    <button class="theme-btn" id="themeToggle" type="button">Dark mode</button>
+  </header>
+
+  <div class="controls">
+    <div class="control-group">
+      <span class="control-label">Company</span>
+      <button class="tab-btn active" data-company="telenor" type="button">Telenor</button>
+      <button class="tab-btn" data-company="vodacom" type="button">Vodacom</button>
+    </div>
+    <div class="control-group">
+      <span class="control-label">View</span>
+      <button class="tab-btn active" data-view="compare" type="button">Compare</button>
+      <button class="tab-btn" data-view="telco" type="button">Telco only</button>
+      <button class="tab-btn" data-view="techco" type="button">Techco only</button>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Layout</span>
+      <button class="tab-btn active" data-layout="grid" type="button">Classic canvas</button>
+      <button class="tab-btn" data-layout="sidebyside" type="button">Side by side</button>
+      <button class="tab-btn" data-layout="list" type="button">Reading list</button>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="highlightToggle" checked>
+      Highlight the biggest shifts
+    </label>
+  </div>
+
+  <div class="toolbar-2">
+    <div class="legend">
+      <span class="legend-item"><span class="swatch" style="background:var(--telco)"></span>Telco (today, connectivity only)</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--techco)"></span>Techco (the digital, beyond connectivity version)</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--warning)"></span>Marked blocks: biggest change needed when migrating</span>
+    </div>
+    <div class="action-btns">
+      <button class="action-btn" id="resetBtn" type="button">Reset this canvas to original</button>
+      <button class="action-btn primary" id="downloadBtn" type="button">Download my edited version</button>
+    </div>
+  </div>
+
+  <div id="canvasArea"></div>
+
+  <div class="insight-panel">
+    <h2 id="insightTitle">Why these blocks matter most</h2>
+    <p id="insightText"></p>
+    <ul class="priority-list" id="priorityList"></ul>
+  </div>
+
+  <footer class="note">
+    Built from the Ivey case "Telenor Group: Developing a New Business Model" (Elter, Larsen and Pedersen, 2019) and Vodacom's own Vision 2030 and TechCo strategy material (Vodacom Group, 2022, 2025). See the full written answers for sources and detail. Every point on this page can be edited, added to, or deleted, use "Download my edited version" to save your own copy as a new file. This tool is a study and presentation aid; please verify figures against your own research before submission.
+  </footer>
+
+</div>
+</div>
+
+<script>
+/*DATA-START*/
+const DATA = {
+  telenor: {
+    telco: {
+      segments: [
+        "Everyday mobile and broadband customers in Norway, Denmark and Sweden.",
+        "Its customers across Central and Eastern Europe and Asia too, over 211 million subscribers altogether across 12 countries.",
+        "Business customers who need dependable mobile and fixed line connections to run their operations."
+      ],
+      vp: [
+        "A phone call, text message and internet connection that customers can simply rely on, wherever they are in the country.",
+        "Nationwide coverage backed by more than 160 years of being in business.",
+        "By the time 4G networks arrived, calls and texts were bundled in for free alongside a customer's data allowance, so the promise became mostly about data."
+      ],
+      channels: [
+        "Physical shops and authorised dealers.",
+        "Call centres for support and sales.",
+        "The network itself, since coverage is really what is being delivered.",
+        "SIM cards handed out in stores to get a new customer connected."
+      ],
+      relations: [
+        "Mostly long term contracts, whether that is a monthly bill or a pay as you go top up.",
+        "Support delivered through call centres and physical stores.",
+        "Fairly standard and impersonal: most customers get the same service regardless of how they use their phone."
+      ],
+      revenue: [
+        "Monthly subscription fees and pay as you go top ups for calls, texts and data.",
+        "Extra income when customers roam and use their phone abroad.",
+        "Business connectivity contracts with corporate clients."
+      ],
+      resources: [
+        "Government licences to use mobile frequencies, known as spectrum, without which no signal can be sent at all.",
+        "The physical network itself: towers, cables and switching equipment.",
+        "A large, loyal customer base built up over decades.",
+        "A trusted brand name, since Telenor has operated continuously since 1855."
+      ],
+      activities: [
+        "Building, maintaining and upgrading the physical network as technology moves from 2G through to 4G and beyond.",
+        "Managing spectrum licences in every country it operates in.",
+        "Running billing and customer support for millions of subscribers.",
+        "Keeping up with regulation across 12 different countries, each with its own rules."
+      ],
+      partners: [
+        "Companies that build network equipment, like base stations and switching gear.",
+        "Other telecom operators, who provide international roaming so customers stay connected abroad.",
+        "Tower companies that own and lease out the physical mast infrastructure.",
+        "Government regulators who license spectrum and set the rules Telenor must follow."
+      ],
+      cost: [
+        "This is a very capital heavy business: most spending goes on building and upgrading the network itself.",
+        "Ongoing costs for spectrum licences, which have to be renewed and paid for in every market.",
+        "Day to day operating costs, plus the cost of winning and keeping customers in a competitive market."
+      ]
+    },
+    techco: {
+      segments: [
+        "All of the Telco customers above, plus new groups reached only through digital products.",
+        "People without a bank account in Pakistan who rely on Easypaisa for everyday payments.",
+        "Advertisers and small businesses who use Tapad's marketing technology.",
+        "Business customers wanting to connect devices to the internet, known as IoT or M2M.",
+        "Early partnerships with local town councils in Norway, and everyday users of the Appear.in video calling tool."
+      ],
+      vp: [
+        "Telenor sums this up simply: being its customers' favourite partner in digital life.",
+        "That means a wide, useful and personal set of digital services sitting on top of the network connection.",
+        "Cloud photo storage through Capture, video calling through Appear.in, content and rewards through WowBox, mobile banking through Easypaisa, connected devices, online classifieds and advertising technology.",
+        "The promise moves from being a one time utility, a working phone line, to something customers get value from every single day."
+      ],
+      channels: [
+        "Everything already used for the network business.",
+        "App stores and direct app distribution for its own digital products.",
+        "An internal incubator that builds and launches new consumer apps from scratch.",
+        "Technical connections, known as APIs, that let Tapad's advertising tools plug into the wider online advertising industry."
+      ],
+      relations: [
+        "More personal and driven by data than the Telco relationship.",
+        "WowBox, for example, is described internally as a direct, one to one channel to each individual customer.",
+        "Engagement through content like news, games and music, not just billing and support.",
+        "Self service digital products that customers can use alongside, or even separately from, their phone contract."
+      ],
+      revenue: [
+        "Network subscription income stays the base, since it still funds most of the business.",
+        "New income layered on top: transaction fees from Easypaisa, advertising income from Tapad and WowBox, and revenue from connected devices.",
+        "Income from ventures that are deliberately run as their own separate businesses, such as financial services, online classifieds and advertising technology."
+      ],
+      resources: [
+        "In house software and product development teams, which a pure network business never needed.",
+        "An internal incubator environment for testing new ideas safely and cheaply.",
+        "The skills and technology gained by buying Tapad outright.",
+        "Data and analytics capability, plus the experience to manage partnerships and joint ventures well."
+      ],
+      activities: [
+        "Building apps in house, rather than only running a network.",
+        "Buying companies with useful skills, as it did with Tapad, described by the CEO as needed because Telenor needs competencies in advanced business models.",
+        "Testing new ventures through the incubator before committing serious money to them.",
+        "Analysing customer data to personalise services, and managing outside partnerships.",
+        "Running some of the new digital businesses independently from the core network division."
+      ],
+      partners: [
+        "Tameer Microfinance Bank, its local partner for Easypaisa in Pakistan.",
+        "Tapad, which it bought outright for its marketing technology skills.",
+        "Other companies in the wider app and advertising ecosystem.",
+        "Early pilot partnerships with local government in Norway."
+      ],
+      cost: [
+        "All of the usual network costs remain in place.",
+        "Extra spending on research and development for each new digital product.",
+        "The cost of buying companies outright: the Tapad acquisition alone cost around 3.1 billion Norwegian kroner.",
+        "Hiring and retraining staff with digital skills such as computer science, product design and data analysis.",
+        "More marketing spend to build awareness of each new product with customers."
+      ]
+    },
+    major: ["vp", "resources", "activities", "revenue"],
+    moderate: ["segments", "channels", "relations"],
+    why: {
+      vp: "This changes because Telenor's promise moves from a single utility, a working phone line, to a broad digital life partner.",
+      resources: "This is the biggest gap: digital products need software engineers, data analysts and venture skills a network business never needed.",
+      activities: "Daily work shifts from running a network to building, buying and incubating digital products.",
+      revenue: "Income diversifies from subscriptions alone into transaction fees, advertising and IoT revenue."
+    },
+    insight: "Telenor's network business stays the funding engine underneath everything, but the case shows the sharpest change is in what the company needs (Key Resources) and what it actually does day to day (Key Activities): software engineers, data teams, an incubator, and a willingness to buy and integrate outside companies, none of which a pure network business needs. The Value Proposition and Revenue Streams shift almost as much, expanding from a single utility promise into a portfolio of digital products and income sources.",
+    priorities: [
+      "Build the software, data and venture skills the network business never needed (Key Resources).",
+      "Redesign daily activities around building, buying and incubating digital products, not just running a network (Key Activities).",
+      "Reframe the promise to customers from a working phone line to an everyday digital life partner (Value Proposition).",
+      "Diversify income beyond subscriptions into transaction fees, advertising and IoT revenue (Revenue Streams)."
+    ]
+  },
+  vodacom: {
+    telco: {
+      segments: [
+        "Everyday consumers across South Africa and other African markets where Vodacom operates, including Lesotho, Mozambique, the Democratic Republic of Congo and Tanzania.",
+        "Business and government customers who need dependable connectivity.",
+        "Small and medium sized businesses across its footprint."
+      ],
+      vp: [
+        "The widest and most dependable mobile network across its main markets, reaching even rural and hard to serve areas.",
+        "A combination of mobile and fixed line internet under one trusted brand.",
+        "The backing, scale and technology of the global Vodafone Group standing behind it.",
+        "Affordable, pay as you go options that suit customers who are careful with their money."
+      ],
+      channels: [
+        "Company owned shops and a wide network of independent dealers.",
+        "A large informal airtime reseller network, which matters enormously in African markets where formal retail is not everywhere.",
+        "Simple phone based menus known as USSD, dialled by typing something like star one three five hash, which work even on basic phones without an internet connection.",
+        "Its own app and website for customers who prefer digital self service."
+      ],
+      relations: [
+        "Mostly a low contact, do it yourself relationship, through pay as you go top ups and USSD menus.",
+        "Dedicated account managers for its larger business customers.",
+        "Strong, long built trust in the Vodacom brand itself, built up over two decades in the market."
+      ],
+      revenue: [
+        "Pay as you go airtime and data, which is by far the biggest source of income.",
+        "Pay monthly contracts for customers who prefer them.",
+        "Business connectivity deals with corporate clients.",
+        "Wholesale income from other telecom companies using its network, plus roaming fees."
+      ],
+      resources: [
+        "Spectrum licences and the largest mobile network footprint in South Africa.",
+        "Extensive towers and fibre infrastructure built up over many years.",
+        "Support, buying power and shared technology from the wider Vodafone Group.",
+        "A very large, loyal existing customer base."
+      ],
+      activities: [
+        "Running and expanding the network, including in rural areas that regulation requires but which are not always very profitable.",
+        "Ongoing engagement with the regulator, ICASA, to keep licences and comply with the rules.",
+        "Managing its very large network of informal resellers, who sell airtime on Vodacom's behalf across the country."
+      ],
+      partners: [
+        "The Vodafone Group, which provides technology, global buying power and brand support.",
+        "Network equipment suppliers who build the physical infrastructure.",
+        "Tower companies that own the masts Vodacom's equipment sits on.",
+        "The huge informal airtime reseller network, and the regulator, ICASA."
+      ],
+      cost: [
+        "Heavy spending on building and expanding the network, including in lower income rural areas that are required by regulation.",
+        "Day to day running costs for the whole operation.",
+        "Commissions paid out to the dealer and reseller network.",
+        "Ongoing spectrum licence fees."
+      ]
+    },
+    techco: {
+      segments: [
+        "Existing mobile and home internet customers, the same base as the Telco business.",
+        "People across Africa who do not currently have a bank account: Vodacom is targeting around 120 million financial services customers by 2030.",
+        "Small and medium businesses that need digital and financial tools to grow.",
+        "Large companies and government departments that need help going digital themselves.",
+        "Communities that benefit from projects in farming, healthcare and education, and the outside developers and merchants building smaller apps on Vodacom's platform."
+      ],
+      vp: [
+        "Vodacom describes its ambition as being the solution provider of choice beyond connectivity.",
+        "That means one connected system: a good network connection, plus access to money through payments, loans, insurance and investments via M-Pesa and VodaPay.",
+        "A central app hosting many smaller, useful apps from outside partners.",
+        "Services personalised through data and artificial intelligence, and real help for businesses and governments going digital.",
+        "All of this is backed by a brand that Vodacom's customers already trust, which is a real advantage when asking people to trust a company with their money too."
+      ],
+      channels: [
+        "Everything already used for the network business.",
+        "VodaPay, a central app that hosts many smaller apps built by other companies.",
+        "Technical connections, known as APIs, that let outside businesses plug directly into Vodacom's platform.",
+        "Digital sales channels run entirely through the cloud.",
+        "Personalised offers delivered straight through the app, powered by artificial intelligence."
+      ],
+      relations: [
+        "A shift away from a simple, low contact, pay as you go relationship toward something closer and more ongoing, built through the app.",
+        "Personalised using data and artificial intelligence, rather than one size fits all.",
+        "Made stickier by holding a customer's digital wallet and credit history, not just their SIM card.",
+        "Mostly managed by the customer themselves, through the app, rather than through a call centre."
+      ],
+      revenue: [
+        "New income layered on top of the existing network business: financial services income, which Vodacom hopes to grow by around 15 to 20 percent a year up to 2030.",
+        "A share of sales made through smaller apps and by outside merchants on its platform.",
+        "Fees for helping businesses and governments with cloud computing, connected devices and cybersecurity.",
+        "Possible future income from data and advertising.",
+        "Overall, Vodacom wants more than 30 percent of its service income to come from these newer, non network sources by 2030."
+      ],
+      resources: [
+        "Software and platform development teams, a skill set a traditional network business never needed at this scale.",
+        "Artificial intelligence and data science skills to power personalisation.",
+        "The licences and risk management skills needed to legally offer financial services.",
+        "Cloud computing infrastructure, including partnerships with large cloud providers.",
+        "The VodaPay platform itself, and a wide network of financial technology and cloud partners."
+      ],
+      activities: [
+        "Building and running the VodaPay platform day to day.",
+        "Developing and training artificial intelligence tools that personalise the customer experience.",
+        "Designing financial products and managing the legal and compliance side of offering them responsibly.",
+        "Bringing new smaller apps and merchants onto the platform and checking their quality.",
+        "Constantly testing and trying new ideas, which Vodacom describes as part of its own culture."
+      ],
+      partners: [
+        "Banking and financial technology partners who help make the financial services legally and technically possible.",
+        "Large cloud computing providers, such as AWS.",
+        "The developers and merchants who build and sell through the smaller apps on its platform.",
+        "The wider Vodafone Group, which shares technology and know how across its markets.",
+        "Partners working on farming, health and education projects that use its platform for social good."
+      ],
+      cost: [
+        "The same heavy network costs as before: towers, fibre, satellite links and rural coverage.",
+        "New costs for building software and platforms.",
+        "Investment in artificial intelligence infrastructure and talent.",
+        "Money spent buying or investing in new ventures, plus the cost of meeting financial regulation requirements.",
+        "Large scale retraining of staff through programmes such as #1MoreSkill and Vodafone University."
+      ]
+    },
+    major: ["vp", "resources", "revenue", "activities", "relations"],
+    moderate: ["segments", "channels"],
+    why: {
+      vp: "This is the anchor block: Vodacom must genuinely be seen as a solutions provider, not just a network, before anything else makes sense.",
+      resources: "This is the biggest gap to close: moving from physical network assets to software, data, AI and platform skills.",
+      revenue: "Diversifying away from airtime dependency changes how success is measured and how spending is justified internally.",
+      activities: "Moving from network operations to software and platform development needs a faster, more flexible way of working.",
+      relations: "Moving to a closer, personalised, data driven relationship raises real questions about privacy and trust."
+    },
+    insight: "Comparing the two canvases shows the Value Proposition has to change first and most, since it anchors everything else: Vodacom must genuinely be believed as a solutions provider, not just a network. Key Resources is the hardest gap to close, moving from physical network assets to software, data and AI skills. Revenue Streams, Key Activities and Customer Relationships all shift substantially too, changing how success is measured, how work gets done, and how close and personal the relationship with each customer becomes.",
+    priorities: [
+      "Make the new promise to customers real and consistent: a solutions provider, not just a network (Value Proposition).",
+      "Close the software, data, AI and platform skills gap, which is the hardest and slowest part to build (Key Resources).",
+      "Shift how income is earned and reported, from airtime dependency toward platform and financial services income (Revenue Streams).",
+      "Move daily operations from running a network toward building and orchestrating digital platforms (Key Activities).",
+      "Deepen the customer relationship carefully, since more personalisation also means more responsibility for privacy and trust (Customer Relationships)."
+    ]
+  }
+};
+/*DATA-END*/
+
+const BLOCKS = [
+  { key: "partners",   label: "Key Partners",           cls: "c-partners",  hint: "The outside people and organisations this business leans on to get things done." },
+  { key: "activities", label: "Key Activities",         cls: "c-activities", hint: "The most important things the business actually does, day to day, to make its offer work." },
+  { key: "resources",  label: "Key Resources",          cls: "c-resources", hint: "What the business must own or have access to in order to operate." },
+  { key: "vp",         label: "Value Proposition",      cls: "c-vp",        hint: "The reason a customer picks this company over another one." },
+  { key: "relations",  label: "Customer Relationships", cls: "c-relations", hint: "How the business interacts with customers, and how personal or hands off that feels." },
+  { key: "channels",   label: "Channels",               cls: "c-channels",  hint: "How the business reaches customers and delivers its offer to them." },
+  { key: "segments",   label: "Customer Segments",      cls: "c-segments",  hint: "The different groups of customers the business serves." },
+  { key: "cost",       label: "Cost Structure",         cls: "c-cost",      hint: "Where the money goes to keep the business running." },
+  { key: "revenue",    label: "Revenue Streams",        cls: "c-revenue",   hint: "Where the money comes from." },
+];
+
+const LIST_ORDER = ["segments", "vp", "channels", "relations", "revenue", "resources", "activities", "partners", "cost"];
+
+let state = { company: "telenor", view: "compare", layout: "grid", highlight: true };
+let pendingFocus = null;
+
+const ORIGINAL_HTML = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+function toPoints(val) {
+  if (Array.isArray(val)) return val.slice();
+  return String(val).split(". ").map(s => s.trim()).filter(Boolean).map(s => s.endsWith(".") ? s : s + ".");
+}
+function normalizeToPoints(dataClone) {
+  Object.keys(dataClone).forEach(company => {
+    ["telco", "techco"].forEach(version => {
+      BLOCKS.forEach(b => {
+        dataClone[company][version][b.key] = toPoints(dataClone[company][version][b.key]);
+      });
+    });
+  });
+  return dataClone;
+}
+let liveData = normalizeToPoints(JSON.parse(JSON.stringify(DATA)));
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function pointsListHtml(points, version, blockKey) {
+  const items = points.map((txt, idx) => `
+    <li class="point" data-version="${version}" data-block="${blockKey}" data-idx="${idx}">
+      <span class="point-text" contenteditable="true" spellcheck="false">${escapeHtml(txt)}</span>
+      <button class="del-btn" type="button" title="Delete this point">&times;</button>
+    </li>`).join("");
+  return `<ul class="point-list">${items}</ul>
+    <button class="add-btn" data-version="${version}" data-block="${blockKey}" type="button">+ Add a point</button>`;
+}
+
+function cellHtml(block, data, view, highlightOn) {
+  const isMajor = highlightOn && data.major.includes(block.key);
+  const showTelco = view !== "techco";
+  const showTechco = view !== "telco";
+  let halves = "";
+  if (showTelco) {
+    halves += `<div class="half telco">
+      <div class="half-label">TELCO</div>
+      ${pointsListHtml(data.telco[block.key], "telco", block.key)}
+    </div>`;
+  }
+  if (showTechco) {
+    halves += `<div class="half techco">
+      <div class="half-label">TECHCO</div>
+      ${pointsListHtml(data.techco[block.key], "techco", block.key)}
+      ${isMajor && data.why && data.why[block.key] ? `<div class="why-line">${escapeHtml(data.why[block.key])}</div>` : ""}
+    </div>`;
+  }
+  return `<div class="cell ${block.cls} ${isMajor ? "major-shift" : ""}">
+    <div class="cell-title"><span>${block.label}</span>${isMajor ? '<span class="shift-tag">Big shift</span>' : ""}</div>
+    <div class="cell-hint">${block.hint}</div>
+    ${halves}
+  </div>`;
+}
+
+function renderGrid(data, view, highlightOn, order) {
+  const blocks = order ? order.map(k => BLOCKS.find(b => b.key === k)) : BLOCKS;
+  return blocks.map(b => cellHtml(b, data, view, highlightOn)).join("");
+}
+
+function render() {
+  const area = document.getElementById("canvasArea");
+  const data = liveData[state.company];
+  let html = "";
+
+  if (state.layout === "sidebyside") {
+    html = `<div class="sbs-wrap">
+      <div>
+        <div class="sbs-col-title telco-title"><span class="swatch" style="background:var(--telco)"></span>Telco (today)</div>
+        <div class="canvas-grid">${renderGrid(data, "telco", state.highlight)}</div>
+      </div>
+      <div>
+        <div class="sbs-col-title techco-title"><span class="swatch" style="background:var(--techco)"></span>Techco (beyond connectivity)</div>
+        <div class="canvas-grid">${renderGrid(data, "techco", state.highlight)}</div>
+      </div>
+    </div>`;
+  } else if (state.layout === "list") {
+    html = `<div class="canvas-grid layout-list">${renderGrid(data, state.view, state.highlight, LIST_ORDER)}</div>`;
+  } else {
+    html = `<div class="canvas-grid">${renderGrid(data, state.view, state.highlight)}</div>`;
+  }
+
+  area.innerHTML = html;
+
+  document.getElementById("insightTitle").textContent =
+    `Why these blocks matter most for ${state.company === "telenor" ? "Telenor" : "Vodacom"}`;
+  document.getElementById("insightText").textContent = data.insight;
+  document.getElementById("priorityList").innerHTML = data.priorities
+    .map((t, i) => `<li><span class="rank">${i + 1}</span><span>${t}</span></li>`)
+    .join("");
+
+  if (pendingFocus) {
+    const sel = `li.point[data-version="${pendingFocus.version}"][data-block="${pendingFocus.block}"][data-idx="${pendingFocus.idx}"] .point-text`;
+    const el = area.querySelector(sel);
+    if (el) {
+      el.focus();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      const sel2 = window.getSelection();
+      sel2.removeAllRanges();
+      sel2.addRange(range);
+    }
+    pendingFocus = null;
+  }
+}
+
+// ---- editing: input on a point updates liveData without a full re-render (keeps cursor position) ----
+document.getElementById("canvasArea").addEventListener("input", (e) => {
+  if (!e.target.classList.contains("point-text")) return;
+  const li = e.target.closest("li.point");
+  const { version, block, idx } = li.dataset;
+  liveData[state.company][version][block][Number(idx)] = e.target.textContent;
+});
+
+// ---- clicks: delete point / add point ----
+document.getElementById("canvasArea").addEventListener("click", (e) => {
+  const del = e.target.closest(".del-btn");
+  if (del) {
+    const li = del.closest("li.point");
+    const { version, block, idx } = li.dataset;
+    liveData[state.company][version][block].splice(Number(idx), 1);
+    render();
+    return;
+  }
+  const add = e.target.closest(".add-btn");
+  if (add) {
+    const { version, block } = add.dataset;
+    liveData[state.company][version][block].push("New point, click to edit");
+    pendingFocus = { version, block, idx: liveData[state.company][version][block].length - 1 };
+    render();
+  }
+});
+
+document.querySelectorAll('[data-company]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll('[data-company]').forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.company = btn.dataset.company;
+    render();
+  });
+});
+document.querySelectorAll('[data-view]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll('[data-view]').forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.view = btn.dataset.view;
+    render();
+  });
+});
+document.querySelectorAll('[data-layout]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll('[data-layout]').forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.layout = btn.dataset.layout;
+    render();
+  });
+});
+document.getElementById("highlightToggle").addEventListener("change", (e) => {
+  state.highlight = e.target.checked;
+  render();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm("Reset " + (state.company === "telenor" ? "Telenor" : "Vodacom") + "'s canvas back to the original text? Your edits for this company will be lost.")) return;
+  const fresh = normalizeToPoints(JSON.parse(JSON.stringify({ [state.company]: DATA[state.company] })));
+  liveData[state.company] = fresh[state.company];
+  render();
+});
+
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  const serialized = "const DATA = " + JSON.stringify(liveData, null, 2).replace(/<\/script/g, "<\\/script") + ";";
+  const re = /\/\*DATA-START\*\/[\s\S]*?\/\*DATA-END\*\//;
+  const exportedHtml = ORIGINAL_HTML.replace(re, "/*DATA-START*/\n" + serialized + "\n/*DATA-END*/");
+  const blob = new Blob([exportedHtml], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "bmc-explorer-edited.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+const root = document.documentElement;
+const themeBtn = document.getElementById("themeToggle");
+themeBtn.addEventListener("click", () => {
+  const current = root.getAttribute("data-theme");
+  if (current === "dark") {
+    root.setAttribute("data-theme", "light");
+    themeBtn.textContent = "Dark mode";
+  } else {
+    root.setAttribute("data-theme", "dark");
+    themeBtn.textContent = "Light mode";
+  }
+});
+
+render();
+</script>
+</body>
+</html>
